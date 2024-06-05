@@ -1,6 +1,38 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 
+const Note = require('./models/note')
+//Mongoose definitions
+const mongoose = require('mongoose')
+
+const password = 'alohomora'//process.argv[2]
+/*
+// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
+const url =
+  `mongodb+srv://lajito:${password}@cluster0.9amvxup.mongodb.net/noteApp?
+  retryWrites=true&w=majority&appName=Cluster0`
+
+mongoose.set('strictQuery',false)
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  important: Boolean,
+})
+
+noteSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+const Note = mongoose.model('Note', noteSchema)
+*/
+
+//Notes
 let notes = [
   {
     id: 1,
@@ -24,8 +56,19 @@ let notes = [
 
 app.use(express.json())
 
+
 app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
+})
+
+/*app.get('/api/notes', (request, response) => {
+response.json(notes)
+})*/
+
+app.get('/api/notes', (request, response) => {
+  Note.find({}).then(notes => {
+    response.json(notes)
+  })
 })
 
 const generateId = () => {
@@ -82,3 +125,5 @@ const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+
